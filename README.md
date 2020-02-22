@@ -32,6 +32,7 @@ $ php -d extension=modules/swephp.so --re swephp
 - swe_set_ephe_path // automatic (see below)
 - swe_close // automatic
 
+More to come (work in progress).
 
 If you set env variable for data location:
 
