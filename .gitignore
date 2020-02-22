@@ -8,7 +8,7 @@ config.*
 !config.m4
 libtool
 Makefile*
-.libs
+.libs/*
 # Prerequisites
 *.d
 
@@ -31,6 +31,7 @@ Makefile*
 *.lib
 *.a
 *.la
+*.lai
 *.lo
 
 # Shared objects (inc. Windows DLLs)
