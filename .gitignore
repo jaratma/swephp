@@ -8,6 +8,7 @@ config.*
 !config.m4
 libtool
 Makefile*
+.libs
 # Prerequisites
 *.d
 
