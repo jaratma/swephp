@@ -41,6 +41,55 @@ static PHP_FUNCTION(swe_calc_ut) {
     add_next_index_double(return_value, xx[3]); 
 }
 
+static PHP_FUNCTION(swe_fixstar_ut) {
+
+    double tjd_ut, xx[6];
+    int ipl;
+    int size;
+    long iflag = SEFLG_SPEED;
+    char serr[256]; 
+    long iflgret;
+    char star[41];
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "sd|l", &star, &size, &tjd_ut, &iflag) == FAILURE) {
+        return;
+    }
+
+    iflag |= SEFLG_SPEED;
+
+    iflgret = swe_fixstar_ut(star, tjd_ut, iflag, xx, serr);
+
+    if (iflgret < 0) return;
+
+    array_init(return_value);
+    add_next_index_double(return_value, xx[0]);
+    add_next_index_double(return_value, xx[1]);
+}
+
+static PHP_FUNCTION(swe_nod_aps_ut) {
+
+    double tjd_ut, xnasc[6], xndsc[6], xperi[6], xaphe[6]; 
+    int ipl;
+    int iflag;
+    int method = SE_NODBIT_MEAN;
+    char serr[256]; 
+    long iflgret;
+
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "dl|l", &tjd_ut, &ipl, &iflag) == FAILURE) {
+        return;
+    }
+
+    iflag |= SEFLG_SPEED;
+
+    iflgret = swe_nod_aps_ut(tjd_ut, ipl, iflag, method, xnasc, xndsc, xperi, xaphe, serr);
+
+    if (iflgret < 0) return;
+
+    RETURN_DOUBLE(xnasc[0])
+}
+
+
 static PHP_FUNCTION(swe_houses) {
 
     double tjd_ut;
@@ -58,6 +107,8 @@ static PHP_FUNCTION(swe_houses) {
 
     iflgret = swe_houses(tjd_ut, geolat, geolon, hsys, cusps, ascmc);
 
+    if (iflgret < 0) return;
+
     array_init(return_value);
     add_next_index_double(return_value, cusps[1]);
     add_next_index_double(return_value, cusps[2]);
@@ -72,6 +123,45 @@ static PHP_FUNCTION(swe_houses) {
     add_next_index_double(return_value, ascmc[3]);
 }
 
+static PHP_FUNCTION(swe_houses_armc) {
+
+    double tjd_ut, xx[6];
+    double armc;
+    double geolat;
+    double geolong;
+    double eps;
+    int hsys;
+    double cusps[13];
+    double ascmc[10];
+    char serr[256]; 
+    long iflgret;
+
+    iflgret = swe_calc_ut(tjd_ut, SE_ECL_NUT, 0, xx, serr);
+    eps = xx[0];
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "dddl", &tjd_ut, &geolat, &geolong, &hsys) == FAILURE) {
+        return;
+    }
+
+    armc = geolong;
+    if (armc < 0) armc += 360;
+
+    iflgret = swe_houses_armc(armc, geolat, eps, hsys, cusps, ascmc); 
+    if (iflgret < 0) return;
+
+    array_init(return_value);
+    add_next_index_double(return_value, cusps[1]);
+    add_next_index_double(return_value, cusps[2]);
+    add_next_index_double(return_value, cusps[3]);
+    add_next_index_double(return_value, cusps[4]);
+    add_next_index_double(return_value, cusps[5]);
+    add_next_index_double(return_value, cusps[6]);
+
+    add_next_index_double(return_value, ascmc[0]);
+    add_next_index_double(return_value, ascmc[1]);
+    add_next_index_double(return_value, ascmc[2]);
+    add_next_index_double(return_value, ascmc[3]);
+}
 
 static PHP_FUNCTION(swe_get_planet_name) {
     long ipl;
@@ -142,6 +232,17 @@ static PHP_FUNCTION(swe_revjul) {
     add_assoc_long(return_value, "month", month);
     add_assoc_long(return_value, "day", day);
     add_assoc_double(return_value, "hour", hour); 
+}
+
+static PHP_FUNCTION(swe_sidtime) {
+
+    double tjd;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "d", &tjd) == FAILURE) {
+        return;
+    }
+
+    RETURN_DOUBLE(swe_sidtime(tjd))
 }
 
 static PHP_MINIT_FUNCTION(swephp) {

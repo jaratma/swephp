@@ -24,15 +24,17 @@ $ php -d extension=modules/swephp.so --re swephp
 - swe_version
 - swe_get_library_path
 - swe_calc_ut
+- swe_fixstar_ut
+- swe_nod_aps_ut
 - swe_houses
+- swe_houses_armc
 - swe_get_planet_name
 - swe_julday
 - swe_date_conversion
 - swe_revjul
+- swe_sidtime
 - swe_set_ephe_path // automatic (see below)
 - swe_close // automatic
-
-More to come (work in progress).
 
 If you set env variable for data location:
 
