@@ -1,0 +1,1 @@
+cp modules/swephp.so  $(php -i | grep "^extension_dir =>" | cut -d " " -f 5)
