@@ -33,15 +33,19 @@ $ php -d extension=modules/swephp.so --re swephp
 - swe_date_conversion
 - swe_revjul
 - swe_sidtime
-- swe_set_ephe_path // automatic (see below)
-- swe_close // automatic
+- swe_set_ephe_path 
+- swe_close // automatically called
 
 If you set env variable for data location:
 
 `export SE_EPHE_PATH=/usr/share/ephe`
 
-library/extension will pick it at load time and no more steps are needed. This is as it is by now, although you could configure the extension to use inner calculation instead of data.  
+library/extension will pick it at load time and no more steps are needed, or can be set later to a valid path.
 
-## TODO
+## Install extension.
 
-Install extension.
+Check before your system:
+
+```
+$ cp modules/swephp.so  $(php -i | grep "^extension_dir =>" | cut -d " " -f 5)
+```

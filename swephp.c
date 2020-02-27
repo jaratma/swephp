@@ -8,7 +8,24 @@
 static PHP_FUNCTION(swe_version) {
     char version[10];
     swe_version(version);
-    php_printf("%s\n", version);
+    RETURN_STRING(version)
+}
+
+static PHP_FUNCTION(swe_set_ephe_path) {
+    char spath[255];
+    int size;
+    struct stat stats;
+    stat(spath, &stats);
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &spath, &size) == FAILURE) {
+        return;
+    }
+
+    if (!S_ISDIR(stats.st_mode)) {
+        return;
+    }
+
+    swe_set_library_path(spath); 
 }
 
 static PHP_FUNCTION(swe_get_library_path) {
