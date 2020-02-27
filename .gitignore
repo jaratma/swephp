@@ -9,6 +9,7 @@ config.*
 libtool
 Makefile*
 .libs/*
+.libs/*.lai
 # Prerequisites
 *.d
 
