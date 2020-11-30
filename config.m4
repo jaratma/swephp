@@ -3,7 +3,7 @@ PHP_ARG_WITH(swephp)
 
 if TEST "$PHP_SWEPHP" != "no"; then
 
-    dnl Check for required libcurl library
+    dnl Check for required libswe library
     AC_MSG_CHECKING([for libswe])
     for i in $PHP_SWEPHP /usr/local ; do
         if test -f "$i/include/swe/swephexp.h"; then 

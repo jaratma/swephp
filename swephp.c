@@ -3,7 +3,7 @@
 #endif
 
 #include "php.h"
-#include <swe/swephexp.h>
+#include <swe2.9/swephexp.h>
 
 static PHP_FUNCTION(swe_version) {
     char version[10];
@@ -25,12 +25,12 @@ static PHP_FUNCTION(swe_set_ephe_path) {
         return;
     }
 
-    swe_set_library_path(spath); 
+    swe_set_ephe_path(spath);
 }
 
 static PHP_FUNCTION(swe_get_library_path) {
     char spath[255];
-    swe_get_library_path(spath); 
+    swe_get_library_path(spath);
     RETURN_STRING(spath);
 }
 
@@ -39,7 +39,7 @@ static PHP_FUNCTION(swe_calc_ut) {
     double tjd_ut, xx[6];
     int ipl;
     long iflag = SEFLG_SPEED;
-    char serr[256]; 
+    char serr[256];
     long iflgret;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "dl|l", &tjd_ut, &ipl, &iflag) == FAILURE) {
@@ -55,7 +55,7 @@ static PHP_FUNCTION(swe_calc_ut) {
     array_init(return_value);
     add_next_index_double(return_value, xx[0]);
     add_next_index_double(return_value, xx[1]);
-    add_next_index_double(return_value, xx[3]); 
+    add_next_index_double(return_value, xx[3]);
 }
 
 static PHP_FUNCTION(swe_fixstar_ut) {
@@ -64,7 +64,7 @@ static PHP_FUNCTION(swe_fixstar_ut) {
     int ipl;
     int size;
     long iflag = SEFLG_SPEED;
-    char serr[256]; 
+    char serr[256];
     long iflgret;
     char star[41];
 
@@ -85,11 +85,11 @@ static PHP_FUNCTION(swe_fixstar_ut) {
 
 static PHP_FUNCTION(swe_nod_aps_ut) {
 
-    double tjd_ut, xnasc[6], xndsc[6], xperi[6], xaphe[6]; 
+    double tjd_ut, xnasc[6], xndsc[6], xperi[6], xaphe[6];
     int ipl;
     int iflag;
     int method = SE_NODBIT_MEAN;
-    char serr[256]; 
+    char serr[256];
     long iflgret;
 
 
@@ -110,7 +110,7 @@ static PHP_FUNCTION(swe_nod_aps_ut) {
 static PHP_FUNCTION(swe_houses) {
 
     double tjd_ut;
-    double geolat; 
+    double geolat;
     double geolon;
     int hsys;
     double cusps[13];
@@ -150,7 +150,7 @@ static PHP_FUNCTION(swe_houses_armc) {
     int hsys;
     double cusps[13];
     double ascmc[10];
-    char serr[256]; 
+    char serr[256];
     long iflgret;
 
     iflgret = swe_calc_ut(tjd_ut, SE_ECL_NUT, 0, xx, serr);
@@ -163,7 +163,7 @@ static PHP_FUNCTION(swe_houses_armc) {
     armc = geolong;
     if (armc < 0) armc += 360;
 
-    iflgret = swe_houses_armc(armc, geolat, eps, hsys, cusps, ascmc); 
+    iflgret = swe_houses_armc(armc, geolat, eps, hsys, cusps, ascmc);
     if (iflgret < 0) return;
 
     array_init(return_value);
@@ -189,7 +189,7 @@ static PHP_FUNCTION(swe_get_planet_name) {
     }
 
     swe_get_planet_name(ipl, sname);
-    RETURN_STRING(sname); 
+    RETURN_STRING(sname);
 }
 
 static PHP_FUNCTION(swe_julday) {
@@ -248,7 +248,7 @@ static PHP_FUNCTION(swe_revjul) {
     add_assoc_long(return_value, "year", year);
     add_assoc_long(return_value, "month", month);
     add_assoc_long(return_value, "day", day);
-    add_assoc_double(return_value, "hour", hour); 
+    add_assoc_double(return_value, "hour", hour);
 }
 
 static PHP_FUNCTION(swe_sidtime) {
@@ -266,7 +266,7 @@ static PHP_MINIT_FUNCTION(swephp) {
     char version[10];
     swe_set_ephe_path(NULL);
     swe_version(version);
-    
+
     if (strcmp(version, "2.08") != 0) {
         return FAILURE;
     }
@@ -282,6 +282,7 @@ static PHP_MSHUTDOWN_FUNCTION(swephp) {
 
 static zend_function_entry swephp_functions[] = {
     PHP_FE(swe_version, NULL)
+    PHP_FE(swe_set_ephe_path, NULL)
     PHP_FE(swe_get_library_path, NULL)
     PHP_FE(swe_julday, NULL)
     PHP_FE(swe_revjul, NULL)
@@ -289,7 +290,10 @@ static zend_function_entry swephp_functions[] = {
     PHP_FE(swe_get_planet_name, NULL)
     PHP_FE(swe_calc_ut, NULL)
     PHP_FE(swe_houses, NULL)
-
+    PHP_FE(swe_houses_armc, NULL)
+    PHP_FE(swe_sidtime, NULL)
+    PHP_FE(swe_fixstar_ut, NULL)
+    PHP_FE(swe_nod_aps_ut, NULL) 
     PHP_FE_END
 };
 
@@ -297,7 +301,7 @@ zend_module_entry swephp_module_entry = {
     STANDARD_MODULE_HEADER,
     "swephp",
     swephp_functions, /* functions */
-    PHP_MINIT(swephp), 
+    PHP_MINIT(swephp),
     PHP_MSHUTDOWN(swephp), /* MSHUTDOWN */
     NULL, /* RINIT */
     NULL, /* RSHUTDOWN */
